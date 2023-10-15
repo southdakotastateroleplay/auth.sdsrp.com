@@ -1,26 +1,28 @@
-const apiKey = '072e3215a571fce6a9207ae170cf0cc8e3ef48ad';  // Replace with your JumpCloud API key
+const jumpCloudApiKey = '072e3215a571fce6a9207ae170cf0cc8e3ef48ad';  // Replace with your JumpCloud API key
 
-function getUserInfo() {
-  const apiUrl = 'https://api.jumpcloud.com/systemusers';
+function authenticateUser(username, password) {
+  const apiUrl = `https://api.jumpcloud.com/systemusers/${username}/authenticate`;
 
-  axios.get(apiUrl, {
+  return axios.post(apiUrl, {
+    password
+  }, {
     headers: {
-      'x-api-key': apiKey
+      'x-api-key': jumpCloudApiKey
     }
-  })
-  .then(response => {
-    const users = response.data;
-    displayUserInfo(users);
-  })
-  .catch(error => {
-    console.error('Error fetching user info:', error);
   });
 }
 
-function displayUserInfo(users) {
-  const userInfoDiv = document.getElementById('userInfo');
-  userInfoDiv.innerHTML = '<h2>User Information:</h2>';
-  users.forEach(user => {
-    userInfoDiv.innerHTML += `<p>${user.userName}</p>`;
-  });
+function login() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  authenticateUser(username, password)
+    .then(response => {
+      console.log('Authentication successful:', response.data);
+      alert('Authentication successful!');
+    })
+    .catch(error => {
+      console.error('Authentication failed:', error);
+      alert('Authentication failed. Please check your credentials.');
+    });
 }
